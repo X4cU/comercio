@@ -3,25 +3,32 @@ import axiosClient from '../api/axiosClient';
 import Loading from '../components/Loading';
 
 const Dashboard = () => {
-  const [status, setStatus] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let mounted = true;
-    const fetchHealth = async () => {
+
+    const fetchProfile = async () => {
       try {
-        const { data } = await axiosClient.get('/health');
+        const { data } = await axiosClient.get('/me');
         if (mounted) {
-          setStatus(data);
+          setUserInfo(data);
+          setError(null);
         }
       } catch (err) {
         if (mounted) {
-          setError('Error al obtener el estado del backend');
+          const status = err?.response?.status;
+          if (status === 401 || status === 403) {
+            setError('Tu sesión expiró o no tienes permisos. Inicia sesión nuevamente.');
+          } else {
+            setError('No se pudo obtener tu perfil.');
+          }
         }
       }
     };
 
-    fetchHealth();
+    fetchProfile();
     return () => {
       mounted = false;
     };
@@ -29,14 +36,29 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1 className="mb-4">Dashboard (público en Fase 4 será protegido)</h1>
-      {!status && !error && <Loading />}
-      {status && (
-        <pre className="bg-light p-3 rounded border">
-          {JSON.stringify(status, null, 2)}
-        </pre>
+      <h1 className="mb-4">Dashboard</h1>
+      {!userInfo && !error && <Loading />}
+      {userInfo && (
+        <div className="card">
+          <div className="card-body">
+            <h5 className="card-title">Bienvenido, {userInfo.username}</h5>
+            <p className="card-text mb-1">
+              <strong>Email:</strong> {userInfo.email || 'Sin correo'}
+            </p>
+            <div>
+              <strong>Roles:</strong>
+              <ul className="mb-0">
+                {userInfo.roles.length > 0 ? (
+                  userInfo.roles.map((role) => <li key={role}>{role}</li>)
+                ) : (
+                  <li>Sin roles asignados</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </div>
       )}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger mt-3">{error}</div>}
     </div>
   );
 };

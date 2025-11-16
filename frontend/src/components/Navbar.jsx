@@ -1,12 +1,9 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { keycloakService } from '../auth/keycloakService';
 
 const Navbar = () => {
-  const navigate = useNavigate();
-
   const handleLogout = () => {
     keycloakService.logout();
-    navigate('/login');
   };
 
   return (

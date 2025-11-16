@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { keycloakService } from '../auth/keycloakService';
 
-const ProtectedRoute = ({ children }) => {
-  if (!keycloakService.getToken()) {
+export const ProtectedRoute = ({ children }) => {
+  if (!keycloakService.isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
   return children;
