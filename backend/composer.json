@@ -1,0 +1,11 @@
+{
+  "name": "comercio/backend",
+  "type": "project",
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^11.0"
+  },
+  "require-dev": {
+    "nunomaduro/collision": "^7.0"
+  }
+}
