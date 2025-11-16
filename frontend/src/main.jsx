@@ -1,17 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-function App() {
-  return (
-    <main>
-      <h1>Comercio Frontend</h1>
-      <p>Configura tus variables en <code>.env</code> para consumir el backend.</p>
-    </main>
-  );
-}
+import { BrowserRouter } from 'react-router-dom';
+import AppRouter from './router/AppRouter';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/main.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <AppRouter />
+    </BrowserRouter>
   </React.StrictMode>
 );

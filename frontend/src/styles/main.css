@@ -1,0 +1,21 @@
+body {
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fb;
+  color: #1f1f1f;
+}
+
+a {
+  text-decoration: none;
+}
+
+.auth-layout {
+  background: linear-gradient(135deg, #f0f4ff 0%, #fefefe 100%);
+}
+
+.navbar-brand {
+  letter-spacing: 0.08em;
+}
+
+pre {
+  margin-bottom: 0;
+}
