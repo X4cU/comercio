@@ -1,0 +1,84 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: comercio_postgres
+    environment:
+      POSTGRES_USER: comercio
+      POSTGRES_PASSWORD: comercio123
+      POSTGRES_DB: comercio
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - comercio-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    container_name: comercio_keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: comercio
+      KC_DB_PASSWORD: comercio123
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - comercio-net
+
+  backend:
+    build: ../backend
+    container_name: comercio_backend
+    volumes:
+      - ../backend:/var/www/html
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: comercio
+      DB_USERNAME: comercio
+      DB_PASSWORD: comercio123
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - comercio-net
+
+  frontend:
+    build: ../frontend
+    container_name: comercio_frontend
+    working_dir: /app
+    volumes:
+      - ../frontend:/app
+    ports:
+      - "5173:5173"
+    networks:
+      - comercio-net
+
+  nginx:
+    image: nginx:1.25
+    container_name: comercio_nginx
+    volumes:
+      - ./nginx/backend.conf:/etc/nginx/conf.d/backend.conf:ro
+      - ./nginx/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
+      - ../backend:/var/www/html:ro
+    ports:
+      - "80:80"
+      - "9000:9000"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - comercio-net
+
+volumes:
+  postgres_data:
+
+networks:
+  comercio-net:
+    driver: bridge

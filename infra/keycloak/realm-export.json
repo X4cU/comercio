@@ -1,0 +1,19 @@
+{
+  "realm": "comercio",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "comercio-backend",
+      "secret": "change-me",
+      "publicClient": false,
+      "redirectUris": ["http://localhost/*"],
+      "directAccessGrantsEnabled": true
+    },
+    {
+      "clientId": "comercio-frontend",
+      "publicClient": true,
+      "redirectUris": ["http://localhost/*"],
+      "webOrigins": ["+"]
+    }
+  ]
+}
