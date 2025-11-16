@@ -6,7 +6,7 @@ if [ ! -f ".env" ] && [ -f ".env.example" ]; then
 fi
 
 if command -v composer >/dev/null 2>&1 && [ -f composer.json ]; then
-  composer install --no-interaction --prefer-dist
+  composer install --no-interaction --prefer-dist || true
 fi
 
 php-fpm
