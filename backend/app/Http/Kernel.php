@@ -62,5 +62,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'env.local' => \App\Http\Middleware\EnvLocalMiddleware::class,
         'kc.jwt' => \App\Http\Middleware\KeycloakJwtMiddleware::class,
+        'role.superadmin' => \App\Http\Middleware\EnsureSuperAdmin::class,
     ];
 }
