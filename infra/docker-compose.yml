@@ -6,12 +6,12 @@ services:
       POSTGRES_USER: comercio
       POSTGRES_PASSWORD: comercio123
       POSTGRES_DB: comercio
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - comercio-net
+    ports:
+      - "5432:5432"
 
   keycloak:
     image: quay.io/keycloak/keycloak:23.0
@@ -25,38 +25,35 @@ services:
       KC_DB_URL_DATABASE: keycloak
       KC_DB_USERNAME: comercio
       KC_DB_PASSWORD: comercio123
-    ports:
-      - "8080:8080"
     depends_on:
       - postgres
     networks:
       - comercio-net
+    ports:
+      - "8080:8080"
 
   backend:
-    build: ../backend
+    build:
+      context: ../backend
     container_name: comercio_backend
     volumes:
       - ../backend:/var/www/html
     environment:
-      DB_HOST: postgres
+      DB_HOST: comercio_postgres
       DB_PORT: 5432
       DB_DATABASE: comercio
       DB_USERNAME: comercio
       DB_PASSWORD: comercio123
     depends_on:
       - postgres
-      - keycloak
     networks:
       - comercio-net
 
   frontend:
-    build: ../frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.prod
     container_name: comercio_frontend
-    working_dir: /app
-    volumes:
-      - ../frontend:/app
-    ports:
-      - "5173:5173"
     networks:
       - comercio-net
 
@@ -67,14 +64,14 @@ services:
       - ./nginx/backend.conf:/etc/nginx/conf.d/backend.conf:ro
       - ./nginx/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
       - ../backend:/var/www/html:ro
-    ports:
-      - "80:80"
-      - "9000:9000"
+      - ../frontend/dist:/usr/share/nginx/html:ro
     depends_on:
       - backend
       - frontend
     networks:
       - comercio-net
+    ports:
+      - "80:80"
 
 volumes:
   postgres_data:
