@@ -63,6 +63,11 @@ class Producto extends Model
         $this->attributes['imagen'] = $value ?: null;
     }
 
+    public function stockTarget(): HasOne
+    {
+        return $this->hasOne(ProductStockTarget::class, 'product_id');
+    }
+
     public function getImagenUrlAttribute(): ?string
     {
         if (!$this->imagen) {
