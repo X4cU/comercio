@@ -5,6 +5,9 @@ import ListadoProductos from '../modules/productos/pages/ListadoProductos';
 import NuevoProducto from '../modules/productos/pages/NuevoProducto';
 import EditarProducto from '../modules/productos/pages/EditarProducto';
 import DetalleProducto from '../modules/productos/pages/DetalleProducto';
+import ListadoCategorias from '../modules/categorias/pages/ListadoCategorias';
+import NuevaCategoria from '../modules/categorias/pages/NuevaCategoria';
+import EditarCategoria from '../modules/categorias/pages/EditarCategoria';
 
 function Placeholder({ title }) {
   return (
@@ -24,6 +27,9 @@ export default function AppRouter() {
         <Route path="/productos/nuevo" element={<NuevoProducto />} />
         <Route path="/productos/:id/editar" element={<EditarProducto />} />
         <Route path="/productos/:id" element={<DetalleProducto />} />
+        <Route path="/categorias" element={<ListadoCategorias />} />
+        <Route path="/categorias/nueva" element={<NuevaCategoria />} />
+        <Route path="/categorias/:id/editar" element={<EditarCategoria />} />
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
       </Route>
