@@ -45,7 +45,6 @@ const sections = [
       },
       { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
       { to: '/categorias', label: 'Categorías', icon: TagIcon },
-      { to: '/categorias/nueva', label: 'Nueva categoría', icon: ClipboardDocumentListIcon }
     ]
   },
   {
