@@ -150,3 +150,5 @@ export const productosService = {
     return true;
   }
 };
+
+export const getProductosLite = (...args) => productosService.getProductosLite(...args);
