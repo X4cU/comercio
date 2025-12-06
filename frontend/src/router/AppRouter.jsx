@@ -8,6 +8,7 @@ import CategoriasPage from '../modules/categorias/pages/CategoriasPage';
 import StockDashboardPage from '../modules/stock/pages/StockDashboardPage';
 import MovimientoNuevoPage from '../modules/stock/pages/MovimientoNuevoPage';
 import HistorialMovimientosPage from '../modules/stock/pages/HistorialMovimientosPage';
+import OffersPage from '../modules/offers/pages/OffersPage';
 import OfertasSugeridas from '../modules/ofertas/pages/OfertasSugeridas';
 import NuevaOferta from '../modules/ofertas/pages/NuevaOferta';
 import HistorialOfertas from '../modules/ofertas/pages/HistorialOfertas';
@@ -60,6 +61,22 @@ export default function AppRouter() {
         <Route path="/preventas/simulador" element={<NuevaPreventaPage />} />
         <Route path="/preventas/guardadas" element={<ListadoPreventasPage />} />
         <Route path="/preventas/guardadas/:id" element={<SimuladorVentaPage />} />
+        <Route
+          path="/stock/ofertas"
+          element={
+            <RoleGuard roles={["admin", "superadmin"]}>
+              <OffersPage />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="/stock/ofertas/sugeridas"
+          element={
+            <RoleGuard roles={["repositor", "admin", "superadmin"]}>
+              <OffersPage />
+            </RoleGuard>
+          }
+        />
         <Route path="/ofertas" element={<Navigate to="/ofertas/sugeridas" replace />} />
         <Route path="/ofertas/sugeridas" element={<OfertasSugeridas />} />
         <Route path="/ofertas/nueva" element={<NuevaOferta />} />

@@ -21,9 +21,11 @@ class ProductoFactory extends Factory
             'categoria' => $this->faker->word(),
             'unidad_venta' => $this->faker->randomElement(['unidad', 'kg', 'pack']),
             'tipo' => $this->faker->word(),
-            'sku' => strtoupper($this->faker->bothify('SKU-###')), 
+            'sku' => strtoupper($this->faker->bothify('SKU-###')),
             'descripcion' => $this->faker->sentence(),
             'estado' => true,
+            'shelf_life_days' => $this->faker->numberBetween(2, 7),
+            'perishable' => true,
         ];
     }
 }

@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Producto extends Model
 {
@@ -26,6 +27,8 @@ class Producto extends Model
         'descripcion',
         'imagen',
         'estado',
+        'shelf_life_days',
+        'perishable',
     ];
 
     /**
@@ -35,6 +38,8 @@ class Producto extends Model
      */
     protected $casts = [
         'estado' => 'boolean',
+        'perishable' => 'boolean',
+        'shelf_life_days' => 'integer',
     ];
 
     /**
@@ -47,6 +52,11 @@ class Producto extends Model
         'precio_actual',
         'stock_actual',
     ];
+
+    public function lifecycleStat(): HasOne
+    {
+        return $this->hasOne(ProductLifecycleStat::class, 'product_id');
+    }
 
     public function setImagenAttribute(?string $value): void
     {
