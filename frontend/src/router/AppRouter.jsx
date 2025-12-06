@@ -8,6 +8,8 @@ import DetalleProducto from '../modules/productos/pages/DetalleProducto';
 import ListadoCategorias from '../modules/categorias/pages/ListadoCategorias';
 import NuevaCategoria from '../modules/categorias/pages/NuevaCategoria';
 import EditarCategoria from '../modules/categorias/pages/EditarCategoria';
+import ResumenStock from '../modules/stock/pages/ResumenStock';
+import AlertasStock from '../modules/stock/pages/AlertasStock';
 
 function Placeholder({ title }) {
   return (
@@ -30,6 +32,8 @@ export default function AppRouter() {
         <Route path="/categorias" element={<ListadoCategorias />} />
         <Route path="/categorias/nueva" element={<NuevaCategoria />} />
         <Route path="/categorias/:id/editar" element={<EditarCategoria />} />
+        <Route path="/stock" element={<ResumenStock />} />
+        <Route path="/stock/alertas" element={<AlertasStock />} />
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
       </Route>

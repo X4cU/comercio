@@ -7,7 +7,8 @@ import {
   ClipboardDocumentListIcon,
   ChartBarIcon,
   Cog6ToothIcon,
-  TagIcon
+  TagIcon,
+  BellAlertIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -22,6 +23,15 @@ const sections = [
     title: 'Inventario',
     items: [
       { to: '/productos', label: 'Productos', icon: CubeIcon },
+      {
+        to: '/stock',
+        label: 'Stock y alertas',
+        icon: BellAlertIcon,
+        children: [
+          { to: '/stock', label: 'Resumen' },
+          { to: '/stock/alertas', label: 'Alertas' }
+        ]
+      },
       { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
       { to: '/categorias', label: 'Categorías', icon: TagIcon },
       { to: '/categorias/nueva', label: 'Nueva categoría', icon: ClipboardDocumentListIcon }
@@ -72,6 +82,45 @@ export function Sidebar({ visible, onNavigate = () => {} }) {
                   <Disclosure.Panel className="flex flex-col gap-1 px-2 pb-3">
                     {section.items.map((item) => {
                       const Icon = item.icon;
+                      const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+                      if (hasChildren) {
+                        return (
+                          <div key={item.to} className="flex flex-col gap-1">
+                            <NavLink
+                              to={item.to}
+                              className={({ isActive }) =>
+                                `flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-gray-800 ${
+                                  isActive
+                                    ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 dark:bg-gray-800 dark:text-emerald-200'
+                                    : 'text-gray-700 dark:text-gray-200'
+                                }`
+                              }
+                              onClick={onNavigate}
+                            >
+                              <Icon className="h-5 w-5" />
+                              {item.label}
+                            </NavLink>
+                            <div className="ml-10 flex flex-col gap-1 border-l border-gray-100 pl-3 dark:border-gray-800">
+                              {item.children.map((child) => (
+                                <NavLink
+                                  key={child.to}
+                                  to={child.to}
+                                  className={({ isActive }) =>
+                                    `rounded-lg px-3 py-1 text-xs font-semibold transition hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-gray-800 ${
+                                      isActive
+                                        ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 dark:bg-gray-800 dark:text-emerald-200'
+                                        : 'text-gray-600 dark:text-gray-300'
+                                    }`
+                                  }
+                                  onClick={onNavigate}
+                                >
+                                  {child.label}
+                                </NavLink>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
                       return (
                         <NavLink
                           key={item.to}
