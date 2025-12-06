@@ -1,65 +1,99 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import Button from './Button';
-import { useAuth } from '../hooks/useAuth';
+import { Disclosure, Transition } from '@headlessui/react';
+import {
+  CubeIcon,
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  ChartBarIcon,
+  Cog6ToothIcon
+} from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
-const MENU = [
-  { path: '/', label: 'Inicio', roles: [] },
-  { path: '/productos', label: 'Productos', roles: ['repositor'] },
-  { path: '/stock', label: 'Stock', roles: ['repositor'] },
-  { path: '/ventas', label: 'Ventas', roles: ['cajero'] },
-  { path: '/caja', label: 'Caja', roles: ['cajero'] },
-  { path: '/reportes', label: 'Reportes', roles: ['admin'] },
-  { path: '/configuracion', label: 'Configuración', roles: ['admin'] },
-  { path: '/perfil', label: 'Perfil', roles: [] }
+const sections = [
+  {
+    title: 'General',
+    items: [
+      { to: '/', label: 'Inicio', icon: HomeIcon }
+    ]
+  },
+  {
+    title: 'Inventario',
+    items: [
+      { to: '/productos', label: 'Productos', icon: CubeIcon },
+      { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon }
+    ]
+  },
+  {
+    title: 'Analítica',
+    items: [
+      { to: '/reportes', label: 'Reportes', icon: ChartBarIcon },
+      { to: '/configuracion', label: 'Configuración', icon: Cog6ToothIcon }
+    ]
+  }
 ];
 
-export default function Sidebar() {
-  const { hasRole, user } = useAuth();
-
-  const visible = MENU.filter((item) =>
-    item.roles.length === 0 || hasRole('superadmin') || item.roles.some((role) => hasRole(role))
-  );
-
+export function Sidebar({ visible, onNavigate = () => {} }) {
   return (
     <aside
-      style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid var(--border)',
-        borderRadius: '1.2rem',
-        padding: '1rem',
-        minWidth: '240px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.75rem',
-        boxShadow: 'var(--shadow)',
-        height: '100%'
-      }}
+      className={`${
+        visible ? 'translate-x-0' : '-translate-x-full'
+      } fixed inset-y-0 left-0 z-30 w-72 border-r border-gray-100 bg-white/90 p-4 shadow-lg backdrop-blur transition-transform duration-200 dark:border-gray-800 dark:bg-gray-900 md:static md:translate-x-0`}
     >
-      <div style={{ marginBottom: '0.5rem' }}>
-        <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.9rem' }}>Bienvenido</p>
-        <p style={{ margin: 0, fontWeight: 700 }}>{user?.name || 'Usuario'}</p>
-        {user?.role && <span className="badge">{user.role}</span>}
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-gray-500">Comercio</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-gray-50">Módulo productos</p>
+        </div>
       </div>
-
-      {visible.map((item) => (
-        <NavLink
-          key={item.path}
-          to={item.path}
-          style={({ isActive }) => ({ textDecoration: 'none' })}
-        >
-          {({ isActive }) => (
-            <Button
-              full
-              variant={isActive ? 'primary' : 'secondary'}
-              size="lg"
-              style={{ fontSize: '1rem' }}
-            >
-              {item.label}
-            </Button>
-          )}
-        </NavLink>
-      ))}
+      <div className="space-y-2">
+        {sections.map((section) => (
+          <Disclosure key={section.title} defaultOpen>
+            {({ open }) => (
+              <div className="rounded-xl border border-gray-100 bg-white/70 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                <Disclosure.Button className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-semibold text-gray-700 transition hover:text-emerald-600 dark:text-gray-200">
+                  {section.title}
+                  <ChevronDownIcon
+                    className={`h-4 w-4 transition ${open ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
+                </Disclosure.Button>
+                <Transition
+                  enter="transition duration-150 ease-out"
+                  enterFrom="transform scale-y-95 opacity-0"
+                  enterTo="transform scale-y-100 opacity-100"
+                  leave="transition duration-100 ease-in"
+                  leaveFrom="transform scale-y-100 opacity-100"
+                  leaveTo="transform scale-y-95 opacity-0"
+                >
+                  <Disclosure.Panel className="flex flex-col gap-1 px-2 pb-3">
+                    {section.items.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          className={({ isActive }) =>
+                            `flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-gray-800 ${
+                              isActive
+                                ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100 dark:bg-gray-800 dark:text-emerald-200'
+                                : 'text-gray-700 dark:text-gray-200'
+                            }`
+                          }
+                          onClick={onNavigate}
+                        >
+                          <Icon className="h-5 w-5" />
+                          {item.label}
+                        </NavLink>
+                      );
+                    })}
+                  </Disclosure.Panel>
+                </Transition>
+              </div>
+            )}
+          </Disclosure>
+        ))}
+      </div>
     </aside>
   );
 }

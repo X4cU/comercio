@@ -1,39 +1,36 @@
 import React from 'react';
-import Button from './Button';
+import { Bars3Icon } from '@heroicons/react/24/solid';
+import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '../hooks/useAuth';
 
-export default function Header() {
-  const { user, logout } = useAuth();
+export function Header({ onToggleSidebar }) {
+  const { user } = useAuth();
 
   return (
-    <header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid var(--border)',
-        borderRadius: '1rem',
-        padding: '0.85rem 1rem',
-        marginBottom: '1rem',
-        backdropFilter: 'blur(8px)'
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-        <div className="avatar">POS</div>
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white/80 p-4 shadow-sm backdrop-blur dark:border-gray-800 dark:bg-gray-900/80">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          className="btn-ghost md:hidden"
+          onClick={onToggleSidebar}
+          aria-label="Abrir menú"
+        >
+          <Bars3Icon className="h-6 w-6" />
+        </button>
         <div>
-          <p style={{ margin: 0, fontWeight: 700 }}>Comercio</p>
-          <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.9rem' }}>Panel de gestión</p>
+          <p className="text-xs uppercase tracking-wide text-emerald-600 dark:text-emerald-300">Comercio POS</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-gray-50">Panel de productos</p>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <div>
-          <p style={{ margin: 0, fontWeight: 700 }}>{user?.name || 'Usuario'}</p>
-          <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.9rem' }}>{user?.role || 'Sin rol'}</p>
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
+        <div className="flex items-center gap-3 rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-semibold text-gray-800 dark:border-gray-800 dark:bg-gray-800 dark:text-gray-100">
+          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500" />
+          <div className="leading-tight">
+            <p>{user?.name || 'Usuario'}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{user?.role || 'Rol no asignado'}</p>
+          </div>
         </div>
-        <Button variant="secondary" size="sm" onClick={logout}>
-          Cerrar sesión
-        </Button>
       </div>
     </header>
   );
