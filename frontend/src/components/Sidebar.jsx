@@ -24,7 +24,21 @@ const sections = [
   {
     title: 'Inventario',
     items: [
-      { to: '/productos', label: 'Productos', icon: CubeIcon },
+      { to: '/categorias', label: 'Categorías', icon: TagIcon },
+      {
+        to: '/productos',
+        label: 'Productos',
+        icon: CubeIcon,
+        children: [
+          { to: '/productos', label: 'Listado' },
+          { to: '/productos/nuevo', label: 'Nuevo producto' }
+        ]
+      }
+    ]
+  },
+  {
+    title: 'Operaciones',
+    items: [
       {
         to: '/stock',
         label: 'Stock y alertas',
@@ -42,9 +56,7 @@ const sections = [
           { to: '/ingresos/nuevo', label: 'Nuevo ingreso' },
           { to: '/ingresos/historial', label: 'Historial de ingresos' }
         ]
-      },
-      { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
-      { to: '/categorias', label: 'Categorías', icon: TagIcon },
+      }
     ]
   },
   {

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import DashboardLayout from '../layout/DashboardLayout';
-import ListadoProductos from '../modules/productos/pages/ListadoProductos';
-import NuevoProducto from '../modules/productos/pages/NuevoProducto';
-import EditarProducto from '../modules/productos/pages/EditarProducto';
-import DetalleProducto from '../modules/productos/pages/DetalleProducto';
+import ProductosPage from '../modules/productos/pages/ProductosPage';
+import ProductoNuevoPage from '../modules/productos/pages/ProductoNuevoPage';
+import ProductoEditarPage from '../modules/productos/pages/ProductoEditarPage';
 import CategoriasPage from '../modules/categorias/pages/CategoriasPage';
 import ResumenStock from '../modules/stock/pages/ResumenStock';
 import AlertasStock from '../modules/stock/pages/AlertasStock';
@@ -28,10 +27,9 @@ export default function AppRouter() {
     <Routes>
       <Route element={<DashboardLayout />}>
         <Route index element={<Placeholder title="Inicio" />} />
-        <Route path="/productos" element={<ListadoProductos />} />
-        <Route path="/productos/nuevo" element={<NuevoProducto />} />
-        <Route path="/productos/:id/editar" element={<EditarProducto />} />
-        <Route path="/productos/:id" element={<DetalleProducto />} />
+        <Route path="/productos" element={<ProductosPage />} />
+        <Route path="/productos/nuevo" element={<ProductoNuevoPage />} />
+        <Route path="/productos/:id/editar" element={<ProductoEditarPage />} />
         <Route path="/categorias" element={<CategoriasPage />} />
         <Route path="/stock" element={<ResumenStock />} />
         <Route path="/stock/alertas" element={<AlertasStock />} />
