@@ -63,5 +63,6 @@ class Kernel extends HttpKernel
         'env.local' => \App\Http\Middleware\EnvLocalMiddleware::class,
         'kc.jwt' => \App\Http\Middleware\KeycloakJwtMiddleware::class,
         'role.superadmin' => \App\Http\Middleware\EnsureSuperAdmin::class,
+        'roles' => \App\Http\Middleware\EnsureRoles::class,
     ];
 }
