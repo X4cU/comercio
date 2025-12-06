@@ -18,6 +18,7 @@ import NuevaPreventaPage from '../modules/preventa/pages/NuevaPreventaPage';
 import ListadoPreventasPage from '../modules/preventa/pages/ListadoPreventasPage';
 import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 import PosPage from '../modules/pos/pages/PosPage';
+import PurchaseSuggestionsPage from '../modules/purchasing/pages/PurchaseSuggestionsPage';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -61,6 +62,14 @@ export default function AppRouter() {
         <Route path="/preventas/simulador" element={<NuevaPreventaPage />} />
         <Route path="/preventas/guardadas" element={<ListadoPreventasPage />} />
         <Route path="/preventas/guardadas/:id" element={<SimuladorVentaPage />} />
+        <Route
+          path="/compras/sugeridas"
+          element={
+            <RoleGuard roles={["repositor", "admin", "superadmin"]}>
+              <PurchaseSuggestionsPage />
+            </RoleGuard>
+          }
+        />
         <Route
           path="/stock/ofertas"
           element={

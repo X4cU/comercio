@@ -12,6 +12,7 @@ use App\Http\Controllers\Offers\OfferSuggestionController;
 use App\Http\Controllers\Pos\CashSessionController;
 use App\Http\Controllers\Pos\PosConfigController;
 use App\Http\Controllers\Pos\SaleController;
+use App\Http\Controllers\Purchasing\PurchaseSuggestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function (): void {
@@ -68,4 +69,19 @@ Route::prefix('offers')->middleware(['kc.jwt'])->group(function (): void {
 
     Route::get('/price-for-product/{productId}', [OfferController::class, 'priceForProduct'])
         ->middleware('roles:cajero,repositor,admin,superadmin');
+});
+
+Route::prefix('purchasing')->middleware(['kc.jwt'])->group(function (): void {
+    Route::middleware('roles:repositor,admin,superadmin')->group(function (): void {
+        Route::get('/suggestions', [PurchaseSuggestionController::class, 'index']);
+        Route::get('/suggestions/{id}', [PurchaseSuggestionController::class, 'show']);
+        Route::get('/suggestions/{id}/export', [PurchaseSuggestionController::class, 'export']);
+    });
+
+    Route::middleware('roles:admin,superadmin')->group(function (): void {
+        Route::post('/suggestions/generate', [PurchaseSuggestionController::class, 'generate']);
+        Route::patch('/suggestions/{id}/items/{itemId}', [PurchaseSuggestionController::class, 'updateItem']);
+        Route::post('/suggestions/{id}/confirm', [PurchaseSuggestionController::class, 'confirm']);
+        Route::post('/suggestions/{id}/cancel', [PurchaseSuggestionController::class, 'cancel']);
+    });
 });
