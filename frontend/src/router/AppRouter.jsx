@@ -5,8 +5,9 @@ import ProductosPage from '../modules/productos/pages/ProductosPage';
 import ProductoNuevoPage from '../modules/productos/pages/ProductoNuevoPage';
 import ProductoEditarPage from '../modules/productos/pages/ProductoEditarPage';
 import CategoriasPage from '../modules/categorias/pages/CategoriasPage';
-import ResumenStock from '../modules/stock/pages/ResumenStock';
-import AlertasStock from '../modules/stock/pages/AlertasStock';
+import StockDashboardPage from '../modules/stock/pages/StockDashboardPage';
+import MovimientoNuevoPage from '../modules/stock/pages/MovimientoNuevoPage';
+import HistorialMovimientosPage from '../modules/stock/pages/HistorialMovimientosPage';
 import OfertasSugeridas from '../modules/ofertas/pages/OfertasSugeridas';
 import NuevaOferta from '../modules/ofertas/pages/NuevaOferta';
 import HistorialOfertas from '../modules/ofertas/pages/HistorialOfertas';
@@ -31,8 +32,9 @@ export default function AppRouter() {
         <Route path="/productos/nuevo" element={<ProductoNuevoPage />} />
         <Route path="/productos/:id/editar" element={<ProductoEditarPage />} />
         <Route path="/categorias" element={<CategoriasPage />} />
-        <Route path="/stock" element={<ResumenStock />} />
-        <Route path="/stock/alertas" element={<AlertasStock />} />
+        <Route path="/stock" element={<StockDashboardPage />} />
+        <Route path="/stock/movimientos/nuevo" element={<MovimientoNuevoPage />} />
+        <Route path="/stock/historial" element={<HistorialMovimientosPage />} />
         <Route path="/ingresos" element={<NuevoIngreso />} />
         <Route path="/ingresos/nuevo" element={<NuevoIngreso />} />
         <Route path="/ingresos/historial" element={<HistorialIngresos />} />
