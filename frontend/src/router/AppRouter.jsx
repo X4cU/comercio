@@ -16,6 +16,8 @@ import HistorialIngresos from '../modules/ingresos/pages/HistorialIngresos';
 import NuevaPreventaPage from '../modules/preventa/pages/NuevaPreventaPage';
 import ListadoPreventasPage from '../modules/preventa/pages/ListadoPreventasPage';
 import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
+import PosPage from '../modules/pos/pages/PosPage';
+import PosLayout from '../layout/PosLayout';
 
 function Placeholder({ title }) {
   return (
@@ -51,6 +53,9 @@ export default function AppRouter() {
         <Route path="/ofertas/historial" element={<HistorialOfertas />} />
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
+      </Route>
+      <Route path="/pos" element={<PosLayout />}>
+        <Route index element={<PosPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
