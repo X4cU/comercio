@@ -10,7 +10,9 @@ import {
   TagIcon,
   BellAlertIcon,
   MegaphoneIcon,
-  ArrowDownOnSquareStackIcon
+  ArrowDownOnSquareStackIcon,
+  ShoppingCartIcon,
+  ClipboardDocumentCheckIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -58,6 +60,13 @@ const sections = [
           { to: '/ingresos/historial', label: 'Historial de ingresos' }
         ]
       }
+    ]
+  },
+  {
+    title: 'Ventas',
+    items: [
+      { to: '/preventas/simulador', label: 'Simulador de venta', icon: ShoppingCartIcon },
+      { to: '/preventas/guardadas', label: 'Preventas guardadas', icon: ClipboardDocumentCheckIcon }
     ]
   },
   {
