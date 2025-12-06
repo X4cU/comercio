@@ -17,7 +17,8 @@ import NuevaPreventaPage from '../modules/preventa/pages/NuevaPreventaPage';
 import ListadoPreventasPage from '../modules/preventa/pages/ListadoPreventasPage';
 import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 import PosPage from '../modules/pos/pages/PosPage';
-import PosLayout from '../layout/PosLayout';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 function Placeholder({ title }) {
   return (
@@ -26,6 +27,18 @@ function Placeholder({ title }) {
       <p className="text-sm text-gray-500 dark:text-gray-400">Contenido en construcción.</p>
     </div>
   );
+}
+
+function RoleGuard({ roles, children }) {
+  const { roles: userRoles = [] } = useContext(AuthContext);
+
+  const allowed = roles.some((role) => userRoles.includes(role) || userRoles.includes('superadmin'));
+
+  if (!allowed) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 }
 
 export default function AppRouter() {
@@ -54,9 +67,14 @@ export default function AppRouter() {
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
       </Route>
-      <Route path="/pos" element={<PosLayout />}>
-        <Route index element={<PosPage />} />
-      </Route>
+      <Route
+        path="/ventas/pos"
+        element={
+          <RoleGuard roles={["cajero", "admin", "superadmin"]}>
+            <PosPage />
+          </RoleGuard>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
