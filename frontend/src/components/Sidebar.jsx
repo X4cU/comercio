@@ -41,11 +41,12 @@ const sections = [
     items: [
       {
         to: '/stock',
-        label: 'Stock y alertas',
+        label: 'Gestión de stock',
         icon: BellAlertIcon,
         children: [
-          { to: '/stock', label: 'Resumen' },
-          { to: '/stock/alertas', label: 'Alertas' }
+          { to: '/stock', label: 'Dashboard' },
+          { to: '/stock/movimientos/nuevo', label: 'Nuevo movimiento' },
+          { to: '/stock/historial', label: 'Historial de movimientos' }
         ]
       },
       {

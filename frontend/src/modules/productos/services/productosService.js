@@ -1,3 +1,5 @@
+import { stockService } from '../../stock/services/stockService';
+
 const delay = (ms = 200) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let productos = [
@@ -40,7 +42,10 @@ const normalizarNumero = (valor) => {
 export const productosService = {
   async getProductos() {
     await delay();
-    return productos.map((producto) => ({ ...producto }));
+    return productos.map((producto) => ({
+      ...producto,
+      stock: stockService.getStock(producto.id, producto.stock ?? 0)
+    }));
   },
 
   async getProductoById(id) {
@@ -49,7 +54,7 @@ export const productosService = {
     if (!encontrado) {
       throw new Error('Producto no encontrado');
     }
-    return { ...encontrado };
+    return { ...encontrado, stock: stockService.getStock(encontrado.id, encontrado.stock ?? 0) };
   },
 
   async createProducto(data) {
@@ -72,6 +77,7 @@ export const productosService = {
     };
 
     productos = [nuevo, ...productos];
+    stockService.setStock(nuevo.id, nuevo.stock);
     return { ...nuevo };
   },
 
@@ -102,7 +108,40 @@ export const productosService = {
       throw new Error('Producto no encontrado');
     }
 
+    stockService.setStock(id, actualizado.stock);
     return { ...actualizado };
+  },
+
+  async actualizarStock(productoId, cantidadNueva) {
+    await delay();
+    let actualizado = null;
+    productos = productos.map((producto) => {
+      if (producto.id !== productoId) return producto;
+      actualizado = { ...producto, stock: normalizarNumero(cantidadNueva) ?? 0 };
+      return actualizado;
+    });
+
+    if (!actualizado) {
+      throw new Error('Producto no encontrado');
+    }
+
+    stockService.setStock(productoId, actualizado.stock);
+    return { ...actualizado };
+  },
+
+  async getProductosLite() {
+    await delay();
+    return productos.map((p) => ({
+      id: p.id,
+      nombre: p.nombre,
+      imagen: p.imagen,
+      categoria: p.categoria,
+      subcategoria: p.subcategoria,
+      categoriaId: p.categoriaId,
+      subcategoriaId: p.subcategoriaId,
+      unidad: p.unidad,
+      stock: stockService.getStock(p.id, p.stock ?? 0)
+    }));
   },
 
   async deleteProducto(id) {
