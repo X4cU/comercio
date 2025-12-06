@@ -6,7 +6,8 @@ import {
   HomeIcon,
   ClipboardDocumentListIcon,
   ChartBarIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -21,7 +22,9 @@ const sections = [
     title: 'Inventario',
     items: [
       { to: '/productos', label: 'Productos', icon: CubeIcon },
-      { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon }
+      { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
+      { to: '/categorias', label: 'Categorías', icon: TagIcon },
+      { to: '/categorias/nueva', label: 'Nueva categoría', icon: ClipboardDocumentListIcon }
     ]
   },
   {
@@ -43,7 +46,7 @@ export function Sidebar({ visible, onNavigate = () => {} }) {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <p className="text-xs uppercase tracking-wide text-gray-500">Comercio</p>
-          <p className="text-lg font-bold text-gray-900 dark:text-gray-50">Módulo productos</p>
+          <p className="text-lg font-bold text-gray-900 dark:text-gray-50">Panel principal</p>
         </div>
       </div>
       <div className="space-y-2">
