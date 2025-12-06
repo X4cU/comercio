@@ -9,7 +9,8 @@ import {
   Cog6ToothIcon,
   TagIcon,
   BellAlertIcon,
-  MegaphoneIcon
+  MegaphoneIcon,
+  ArrowDownOnSquareStackIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -31,6 +32,15 @@ const sections = [
         children: [
           { to: '/stock', label: 'Resumen' },
           { to: '/stock/alertas', label: 'Alertas' }
+        ]
+      },
+      {
+        to: '/ingresos',
+        label: 'Ingresos de mercadería',
+        icon: ArrowDownOnSquareStackIcon,
+        children: [
+          { to: '/ingresos/nuevo', label: 'Nuevo ingreso' },
+          { to: '/ingresos/historial', label: 'Historial de ingresos' }
         ]
       },
       { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
