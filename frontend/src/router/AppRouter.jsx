@@ -13,6 +13,9 @@ import NuevaOferta from '../modules/ofertas/pages/NuevaOferta';
 import HistorialOfertas from '../modules/ofertas/pages/HistorialOfertas';
 import NuevoIngreso from '../modules/ingresos/pages/NuevoIngreso';
 import HistorialIngresos from '../modules/ingresos/pages/HistorialIngresos';
+import NuevaPreventaPage from '../modules/preventa/pages/NuevaPreventaPage';
+import ListadoPreventasPage from '../modules/preventa/pages/ListadoPreventasPage';
+import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 
 function Placeholder({ title }) {
   return (
@@ -38,6 +41,10 @@ export default function AppRouter() {
         <Route path="/ingresos" element={<NuevoIngreso />} />
         <Route path="/ingresos/nuevo" element={<NuevoIngreso />} />
         <Route path="/ingresos/historial" element={<HistorialIngresos />} />
+        <Route path="/preventas" element={<Navigate to="/preventas/guardadas" replace />} />
+        <Route path="/preventas/simulador" element={<NuevaPreventaPage />} />
+        <Route path="/preventas/guardadas" element={<ListadoPreventasPage />} />
+        <Route path="/preventas/guardadas/:id" element={<SimuladorVentaPage />} />
         <Route path="/ofertas" element={<Navigate to="/ofertas/sugeridas" replace />} />
         <Route path="/ofertas/sugeridas" element={<OfertasSugeridas />} />
         <Route path="/ofertas/nueva" element={<NuevaOferta />} />
