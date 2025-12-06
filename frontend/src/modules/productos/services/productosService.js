@@ -6,6 +6,7 @@ let productos = [
   {
     id: 'prd-1',
     nombre: 'Café Tostado 500g',
+    codigoBarras: '7790001000012',
     categoriaId: 'cat-1',
     subcategoriaId: 'sub-1',
     precioBase: 6.5,
@@ -20,6 +21,7 @@ let productos = [
   {
     id: 'prd-2',
     nombre: 'Leche Entera 1L',
+    codigoBarras: '7790002000019',
     categoriaId: 'cat-2',
     subcategoriaId: 'sub-3',
     precioBase: 1.2,
@@ -57,6 +59,15 @@ export const productosService = {
     return { ...encontrado, stock: stockService.getStock(encontrado.id, encontrado.stock ?? 0) };
   },
 
+  async getProductoByCodigoBarras(barcode) {
+    await delay();
+    const limpio = (barcode || '').trim();
+    if (!limpio) return null;
+    const encontrado = productos.find((item) => item.codigoBarras === limpio);
+    if (!encontrado) return null;
+    return { ...encontrado, stock: stockService.getStock(encontrado.id, encontrado.stock ?? 0) };
+  },
+
   async createProducto(data) {
     await delay();
     const precioBase = normalizarNumero(data.precioBase) ?? 0;
@@ -65,6 +76,7 @@ export const productosService = {
     const nuevo = {
       id: crypto.randomUUID(),
       nombre: data.nombre.trim(),
+      codigoBarras: data.codigoBarras?.trim() || '',
       categoriaId: data.categoriaId,
       subcategoriaId: data.subcategoriaId || '',
       precioBase,
@@ -95,6 +107,7 @@ export const productosService = {
         ...producto,
         ...data,
         nombre: data.nombre?.trim() ?? producto.nombre,
+        codigoBarras: data.codigoBarras?.trim() ?? producto.codigoBarras,
         precioBase: precioBase ?? producto.precioBase,
         precioFinal,
         stock: normalizarNumero(data.stock ?? producto.stock) ?? producto.stock,
@@ -134,6 +147,7 @@ export const productosService = {
     return productos.map((p) => ({
       id: p.id,
       nombre: p.nombre,
+      codigoBarras: p.codigoBarras,
       imagen: p.imagen,
       categoria: p.categoria,
       subcategoria: p.subcategoria,
@@ -152,3 +166,4 @@ export const productosService = {
 };
 
 export const getProductosLite = (...args) => productosService.getProductosLite(...args);
+export const getProductoByCodigoBarras = (...args) => productosService.getProductoByCodigoBarras(...args);
