@@ -13,6 +13,8 @@ import AlertasStock from '../modules/stock/pages/AlertasStock';
 import OfertasSugeridas from '../modules/ofertas/pages/OfertasSugeridas';
 import NuevaOferta from '../modules/ofertas/pages/NuevaOferta';
 import HistorialOfertas from '../modules/ofertas/pages/HistorialOfertas';
+import NuevoIngreso from '../modules/ingresos/pages/NuevoIngreso';
+import HistorialIngresos from '../modules/ingresos/pages/HistorialIngresos';
 
 function Placeholder({ title }) {
   return (
@@ -37,6 +39,9 @@ export default function AppRouter() {
         <Route path="/categorias/:id/editar" element={<EditarCategoria />} />
         <Route path="/stock" element={<ResumenStock />} />
         <Route path="/stock/alertas" element={<AlertasStock />} />
+        <Route path="/ingresos" element={<NuevoIngreso />} />
+        <Route path="/ingresos/nuevo" element={<NuevoIngreso />} />
+        <Route path="/ingresos/historial" element={<HistorialIngresos />} />
         <Route path="/ofertas" element={<Navigate to="/ofertas/sugeridas" replace />} />
         <Route path="/ofertas/sugeridas" element={<OfertasSugeridas />} />
         <Route path="/ofertas/nueva" element={<NuevaOferta />} />
