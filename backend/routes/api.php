@@ -6,6 +6,9 @@ use App\Http\Controllers\Api\V1\DebugController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\ProductoController;
+use App\Http\Controllers\Offers\OfferController;
+use App\Http\Controllers\Offers\OfferStatsController;
+use App\Http\Controllers\Offers\OfferSuggestionController;
 use App\Http\Controllers\Pos\CashSessionController;
 use App\Http\Controllers\Pos\PosConfigController;
 use App\Http\Controllers\Pos\SaleController;
@@ -47,4 +50,22 @@ Route::prefix('pos')->middleware(['kc.jwt', 'roles:cajero,admin,superadmin'])->g
     Route::middleware('roles:superadmin')->group(function (): void {
         Route::post('/sales/{id}/cancel', [SaleController::class, 'cancel']);
     });
+});
+
+Route::prefix('offers')->middleware(['kc.jwt'])->group(function (): void {
+    Route::middleware('roles:repositor,admin,superadmin')->group(function (): void {
+        Route::get('/suggestions', OfferSuggestionController::class);
+        Route::get('/active', [OfferController::class, 'active']);
+        Route::get('/{id}', [OfferController::class, 'show']);
+    });
+
+    Route::middleware('roles:admin,superadmin')->group(function (): void {
+        Route::post('/', [OfferController::class, 'store']);
+        Route::patch('/{id}', [OfferController::class, 'update']);
+        Route::post('/{id}/cancel', [OfferController::class, 'cancel']);
+        Route::get('/stats/top', [OfferStatsController::class, 'top']);
+    });
+
+    Route::get('/price-for-product/{productId}', [OfferController::class, 'priceForProduct'])
+        ->middleware('roles:cajero,repositor,admin,superadmin');
 });
