@@ -10,6 +10,9 @@ import NuevaCategoria from '../modules/categorias/pages/NuevaCategoria';
 import EditarCategoria from '../modules/categorias/pages/EditarCategoria';
 import ResumenStock from '../modules/stock/pages/ResumenStock';
 import AlertasStock from '../modules/stock/pages/AlertasStock';
+import OfertasSugeridas from '../modules/ofertas/pages/OfertasSugeridas';
+import NuevaOferta from '../modules/ofertas/pages/NuevaOferta';
+import HistorialOfertas from '../modules/ofertas/pages/HistorialOfertas';
 
 function Placeholder({ title }) {
   return (
@@ -34,6 +37,10 @@ export default function AppRouter() {
         <Route path="/categorias/:id/editar" element={<EditarCategoria />} />
         <Route path="/stock" element={<ResumenStock />} />
         <Route path="/stock/alertas" element={<AlertasStock />} />
+        <Route path="/ofertas" element={<Navigate to="/ofertas/sugeridas" replace />} />
+        <Route path="/ofertas/sugeridas" element={<OfertasSugeridas />} />
+        <Route path="/ofertas/nueva" element={<NuevaOferta />} />
+        <Route path="/ofertas/historial" element={<HistorialOfertas />} />
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
       </Route>
