@@ -8,7 +8,8 @@ import {
   ChartBarIcon,
   Cog6ToothIcon,
   TagIcon,
-  BellAlertIcon
+  BellAlertIcon,
+  MegaphoneIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -35,6 +36,13 @@ const sections = [
       { to: '/productos/nuevo', label: 'Nuevo producto', icon: ClipboardDocumentListIcon },
       { to: '/categorias', label: 'Categorías', icon: TagIcon },
       { to: '/categorias/nueva', label: 'Nueva categoría', icon: ClipboardDocumentListIcon }
+    ]
+  },
+  {
+    title: 'Comercial',
+    items: [
+      { to: '/ofertas/sugeridas', label: 'Ofertas sugeridas', icon: MegaphoneIcon },
+      { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon }
     ]
   },
   {
