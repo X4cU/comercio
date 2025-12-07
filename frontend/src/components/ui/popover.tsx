@@ -1,8 +1,4 @@
-import {
-  Popover as HeadlessPopover,
-  PopoverPanel,
-  Transition
-} from "@headlessui/react";
+import { Popover, Transition } from "@headlessui/react";
 import React, { Fragment, createContext, useContext } from "react";
 
 interface PopoverContextValue {
@@ -15,19 +11,21 @@ function cn(...classes: Array<string | undefined | false | null>) {
   return classes.filter(Boolean).join(" ");
 }
 
-export const Popover: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <HeadlessPopover as="div" className="relative inline-block">
+const PopoverRoot: React.FC<React.PropsWithChildren> = ({ children }) => (
+  <Popover className="relative inline-block">
     {({ close }) => (
       <PopoverContext.Provider value={{ close }}>{children}</PopoverContext.Provider>
     )}
-  </HeadlessPopover>
+  </Popover>
 );
+
+export { PopoverRoot as Popover };
 
 export const PopoverTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<typeof HeadlessPopover.Button>
+  React.ComponentPropsWithoutRef<typeof Popover.Button>
 >(({ className, children, ...props }, ref) => (
-  <HeadlessPopover.Button
+  <Popover.Button
     ref={ref}
     type="button"
     className={cn(
@@ -39,13 +37,13 @@ export const PopoverTrigger = React.forwardRef<
     {...props}
   >
     {children}
-  </HeadlessPopover.Button>
+  </Popover.Button>
 ));
 PopoverTrigger.displayName = "PopoverTrigger";
 
 export const PopoverContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentPropsWithoutRef<typeof PopoverPanel>
+  React.ComponentPropsWithoutRef<typeof Popover.Panel>
 >(({ className, children, ...props }, ref) => (
   <Transition
     as={Fragment}
@@ -56,7 +54,7 @@ export const PopoverContent = React.forwardRef<
     leaveFrom="opacity-100 translate-y-0"
     leaveTo="opacity-0 translate-y-1"
   >
-    <PopoverPanel
+    <Popover.Panel
       ref={ref}
       className={cn(
         "absolute left-0 z-50 mt-2 w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-xl",
@@ -66,7 +64,7 @@ export const PopoverContent = React.forwardRef<
       {...props}
     >
       {children}
-    </PopoverPanel>
+    </Popover.Panel>
   </Transition>
 ));
 PopoverContent.displayName = "PopoverContent";
