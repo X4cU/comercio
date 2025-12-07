@@ -20,6 +20,7 @@ import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 import PosPage from '../modules/pos/pages/PosPage';
 import PurchaseSuggestionsPage from '../modules/purchasing/pages/PurchaseSuggestionsPage';
 import NewMerchandisePage from '../modules/inventory/newMerchandise/pages/NewMerchandisePage';
+import PromotionsPage from '../modules/promotions/pages/PromotionsPage';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -99,6 +100,14 @@ export default function AppRouter() {
         <Route path="/ofertas/sugeridas" element={<OfertasSugeridas />} />
         <Route path="/ofertas/nueva" element={<NuevaOferta />} />
         <Route path="/ofertas/historial" element={<HistorialOfertas />} />
+        <Route
+          path="/promociones"
+          element={
+            <RoleGuard roles={["repositor", "admin", "superadmin"]}>
+              <PromotionsPage />
+            </RoleGuard>
+          }
+        />
         <Route path="/reportes" element={<Placeholder title="Reportes" />} />
         <Route path="/configuracion" element={<Placeholder title="Configuración" />} />
       </Route>
