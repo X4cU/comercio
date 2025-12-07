@@ -1,3 +1,4 @@
+import IconPicker from '@/components/IconPicker';
 import { useEffect, useMemo, useState } from 'react';
 
 const inputClasses =
@@ -5,11 +6,11 @@ const inputClasses =
 const labelClasses = 'block text-sm font-medium text-gray-700 dark:text-gray-200';
 
 export function CategoriaForm({ initialData, onSubmit, onCancel }) {
-  const [form, setForm] = useState({ nombre: '', icono: '' });
+  const [form, setForm] = useState({ nombre: '', icono: null });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    setForm({ nombre: initialData?.nombre || '', icono: initialData?.icono || '' });
+    setForm({ nombre: initialData?.nombre || '', icono: initialData?.icono || null });
   }, [initialData]);
 
   const isValid = useMemo(() => form.nombre.trim().length > 0, [form.nombre]);
@@ -23,7 +24,7 @@ export function CategoriaForm({ initialData, onSubmit, onCancel }) {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    onSubmit?.({ nombre: form.nombre.trim(), icono: form.icono.trim() });
+    onSubmit?.({ nombre: form.nombre.trim(), icono: form.icono?.trim() || '' });
   };
 
   return (
@@ -46,13 +47,7 @@ export function CategoriaForm({ initialData, onSubmit, onCancel }) {
         <label className={labelClasses} htmlFor="icono">
           Icono (nombre lucide-react, opcional)
         </label>
-        <input
-          id="icono"
-          value={form.icono}
-          onChange={(e) => setForm((prev) => ({ ...prev, icono: e.target.value }))}
-          placeholder="Ej: shopping-bag"
-          className={inputClasses}
-        />
+        <IconPicker value={form.icono} onChange={(value) => setForm((prev) => ({ ...prev, icono: value }))} />
         <p className="text-xs text-gray-500 dark:text-gray-400">Puedes dejarlo vacío si no deseas icono.</p>
       </div>
 
