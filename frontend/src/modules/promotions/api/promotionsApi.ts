@@ -1,8 +1,35 @@
 import axios from 'axios';
 import { keycloakService } from '../../../auth/keycloakService';
 
+export type PromotionType = 'PERCENTAGE' | 'FIXED_PRICE';
+
+export interface Promotion {
+  id: number;
+  nombre: string;
+  descripcion?: string | null;
+  tipo: PromotionType;
+  valor_descuento?: number | null;
+  precio_promocional?: number | null;
+  fecha_inicio?: string | null;
+  fecha_fin?: string | null;
+  activo: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type PromotionPayload = {
+  nombre: string;
+  descripcion?: string | null;
+  tipo: PromotionType;
+  valor_descuento?: number | null;
+  precio_promocional?: number | null;
+  fecha_inicio?: string | null;
+  fecha_fin?: string | null;
+  activo: boolean;
+};
+
 const client = axios.create({
-  baseURL: '/api/promotions'
+  baseURL: '/api/promociones'
 });
 
 client.interceptors.request.use((config) => {
@@ -13,33 +40,26 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+const normalizeResponse = (responseData: any): Promotion[] => {
+  if (Array.isArray(responseData?.data)) return responseData.data;
+  if (Array.isArray(responseData)) return responseData;
+  return [];
+};
+
 export const promotionsApi = {
-  async list(params: any = {}) {
+  async getPromotions(params: Record<string, any> = {}): Promise<Promotion[]> {
     const response = await client.get('/', { params });
-    return response.data;
+    return normalizeResponse(response.data);
   },
-  async find(id: number) {
-    const response = await client.get(`/${id}`);
-    return response.data;
-  },
-  async create(payload: any) {
+  async createPromotion(payload: PromotionPayload): Promise<Promotion> {
     const response = await client.post('/', payload);
     return response.data;
   },
-  async update(id: number, payload: any) {
-    const response = await client.patch(`/${id}`, payload);
+  async updatePromotion(id: number, payload: PromotionPayload): Promise<Promotion> {
+    const response = await client.put(`/${id}`, payload);
     return response.data;
   },
-  async toggle(id: number) {
-    const response = await client.post(`/${id}/toggle`);
-    return response.data;
-  },
-  async remove(id: number) {
-    const response = await client.delete(`/${id}`);
-    return response.data;
-  },
-  async check(payload: any) {
-    const response = await client.post('/check', payload);
-    return response.data;
+  async deletePromotion(id: number): Promise<void> {
+    await client.delete(`/${id}`);
   }
 };
