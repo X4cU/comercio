@@ -16,7 +16,6 @@ import {
   BanknotesIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { Tag } from 'lucide-react';
 
 const sections = [
   {
@@ -76,7 +75,7 @@ const sections = [
     items: [
       { to: '/ofertas/sugeridas', label: 'Ofertas sugeridas', icon: MegaphoneIcon },
       { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon },
-      { to: '/comercial/promociones', label: 'Promociones', icon: Tag },
+      { to: '/comercial/promociones', label: 'Promociones', icon: TagIcon },
     ]
   },
   {
