@@ -26,6 +26,7 @@ class PromotionFactory extends Factory
             'scope_id' => null,
             'discount_type' => Promotion::DISCOUNT_PERCENTAGE,
             'discount_value' => $this->faker->numberBetween(5, 30),
+            'promotional_price' => null,
             'min_quantity' => null,
             'valid_from' => $validFrom,
             'valid_until' => now()->addDays(5),

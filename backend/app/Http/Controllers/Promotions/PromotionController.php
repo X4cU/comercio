@@ -146,7 +146,9 @@ class PromotionController extends Controller
         }
 
         $validInTime = (clone $baseQuery)
-            ->where('valid_from', '<=', $at)
+            ->where(function ($query) use ($at) {
+                $query->whereNull('valid_from')->orWhere('valid_from', '<=', $at);
+            })
             ->where(function ($query) use ($at) {
                 $query->whereNull('valid_until')->orWhere('valid_until', '>=', $at);
             })

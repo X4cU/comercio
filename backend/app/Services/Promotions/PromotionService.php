@@ -17,10 +17,18 @@ class PromotionService
 
     public function createPromotion(array $data, string $userId): Promotion
     {
+        $data['discount_type'] ??= Promotion::DISCOUNT_PERCENTAGE;
+        $data['is_active'] = array_key_exists('is_active', $data) ? (bool) $data['is_active'] : true;
+
+        if ($data['discount_type'] === Promotion::DISCOUNT_FIXED_PRICE) {
+            $data['discount_value'] = null;
+        } else {
+            $data['promotional_price'] = null;
+        }
+
         return $this->db->transaction(function () use ($data, $userId) {
             $promotion = Promotion::create([
                 ...$data,
-                'discount_type' => Promotion::DISCOUNT_PERCENTAGE,
                 'created_by' => $userId,
                 'updated_by' => $userId,
             ]);
@@ -37,6 +45,14 @@ class PromotionService
 
     public function updatePromotion(Promotion $promotion, array $data, string $userId): Promotion
     {
+        if (isset($data['discount_type'])) {
+            if ($data['discount_type'] === Promotion::DISCOUNT_FIXED_PRICE) {
+                $data['discount_value'] = null;
+            } else {
+                $data['promotional_price'] = null;
+            }
+        }
+
         return $this->db->transaction(function () use ($promotion, $data, $userId) {
             $promotion->fill($data);
             $promotion->updated_by = $userId;
