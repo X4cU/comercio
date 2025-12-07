@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\DebugController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\ProductoController;
+use App\Http\Controllers\Finance\DailyClosureController;
+use App\Http\Controllers\Finance\FixedCostController;
 use App\Http\Controllers\Inventory\NewMerchandiseController;
 use App\Http\Controllers\Offers\OfferController;
 use App\Http\Controllers\Offers\OfferStatsController;
@@ -51,6 +53,26 @@ Route::prefix('pos')->middleware(['kc.jwt', 'roles:cajero,admin,superadmin'])->g
     Route::get('/sales/{id}', [SaleController::class, 'show']);
     Route::middleware('roles:superadmin')->group(function (): void {
         Route::post('/sales/{id}/cancel', [SaleController::class, 'cancel']);
+    });
+});
+
+Route::prefix('finance')->middleware(['kc.jwt'])->group(function (): void {
+    Route::get('/fixed-costs/daily-total', [FixedCostController::class, 'dailyTotal'])
+        ->middleware('roles:cajero,admin,superadmin');
+
+    Route::middleware('roles:admin,superadmin')->group(function (): void {
+        Route::get('/fixed-costs', [FixedCostController::class, 'index']);
+        Route::post('/fixed-costs', [FixedCostController::class, 'store']);
+        Route::patch('/fixed-costs/{id}', [FixedCostController::class, 'update']);
+
+        Route::get('/daily-closures/today', [DailyClosureController::class, 'today']);
+        Route::get('/daily-closures', [DailyClosureController::class, 'index']);
+        Route::post('/daily-closures', [DailyClosureController::class, 'store']);
+        Route::get('/daily-closures/{id}', [DailyClosureController::class, 'show']);
+    });
+
+    Route::middleware('roles:superadmin')->group(function (): void {
+        Route::post('/daily-closures/{id}/annul', [DailyClosureController::class, 'annul']);
     });
 });
 

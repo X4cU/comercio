@@ -21,6 +21,8 @@ import PosPage from '../modules/pos/pages/PosPage';
 import PurchaseSuggestionsPage from '../modules/purchasing/pages/PurchaseSuggestionsPage';
 import NewMerchandisePage from '../modules/inventory/newMerchandise/pages/NewMerchandisePage';
 import PromotionsPage from '../modules/promotions/pages/PromotionsPage';
+import FixedCostsPage from '../modules/finance/fixedCosts/FixedCostsPage';
+import DailyClosurePage from '../modules/finance/dailyClosures/DailyClosurePage';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -105,6 +107,22 @@ export default function AppRouter() {
           element={
             <RoleGuard roles={["repositor", "admin", "superadmin"]}>
               <PromotionsPage />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="/finanzas/costos-fijos"
+          element={
+            <RoleGuard roles={["admin", "superadmin"]}>
+              <FixedCostsPage />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="/caja/cierre-diario"
+          element={
+            <RoleGuard roles={["admin", "superadmin"]}>
+              <DailyClosurePage />
             </RoleGuard>
           }
         />
