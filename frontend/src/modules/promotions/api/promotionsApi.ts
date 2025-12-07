@@ -3,6 +3,8 @@ import { keycloakService } from '../../../auth/keycloakService';
 
 export type PromotionType = 'PERCENTAGE' | 'FIXED_PRICE';
 
+export type PromotionEstado = 'activa' | 'programada' | 'vencida' | 'inactiva';
+
 export interface Promotion {
   id: number;
   nombre: string;
@@ -13,6 +15,7 @@ export interface Promotion {
   fecha_inicio?: string | null;
   fecha_fin?: string | null;
   activo: boolean;
+  estado?: PromotionEstado;
   created_at?: string;
   updated_at?: string;
 }
@@ -29,7 +32,7 @@ export type PromotionPayload = {
 };
 
 const client = axios.create({
-  baseURL: '/api/promociones'
+  baseURL: '/api/promotions'
 });
 
 client.interceptors.request.use((config) => {
@@ -57,6 +60,10 @@ export const promotionsApi = {
   },
   async updatePromotion(id: number, payload: PromotionPayload): Promise<Promotion> {
     const response = await client.put(`/${id}`, payload);
+    return response.data;
+  },
+  async togglePromotion(id: number): Promise<Promotion> {
+    const response = await client.post(`/${id}/toggle`);
     return response.data;
   },
   async deletePromotion(id: number): Promise<void> {

@@ -16,6 +16,8 @@ class Promotion extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $appends = ['estado'];
+
     public const SCOPE_GLOBAL = 'GLOBAL';
     public const SCOPE_CATEGORY = 'CATEGORY';
     public const SCOPE_PRODUCT = 'PRODUCT';
@@ -49,6 +51,26 @@ class Promotion extends Model
         'is_active' => 'boolean',
         'priority' => 'integer',
     ];
+
+    public function scopeActivas($query)
+    {
+        return $query->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('valid_from')->orWhere('valid_from', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('valid_until')->orWhere('valid_until', '>=', now());
+            });
+    }
+
+    public function scopeVigentes($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('valid_from')->orWhere('valid_from', '<=', now());
+        })->where(function ($q) {
+            $q->whereNull('valid_until')->orWhere('valid_until', '>=', now());
+        });
+    }
 
     public function logs(): HasMany
     {
@@ -121,6 +143,29 @@ class Promotion extends Model
         return Attribute::make(
             get: fn () => $this->is_active,
             set: fn ($value): array => ['is_active' => $value],
+        );
+    }
+
+    protected function estado(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (!$this->is_active) {
+                    return 'inactiva';
+                }
+
+                $now = now();
+
+                if ($this->valid_until && $this->valid_until->isPast()) {
+                    return 'vencida';
+                }
+
+                if ($this->valid_from && $this->valid_from->isFuture()) {
+                    return 'programada';
+                }
+
+                return 'activa';
+            },
         );
     }
 }
