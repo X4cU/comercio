@@ -26,6 +26,8 @@ class ProductoFactory extends Factory
             'estado' => true,
             'shelf_life_days' => $this->faker->numberBetween(2, 7),
             'perishable' => true,
+            'section' => $this->faker->randomElement(['GROCERY', 'PRODUCE', 'DELI']),
+            'current_sale_price' => null,
         ];
     }
 }

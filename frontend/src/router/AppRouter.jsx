@@ -19,6 +19,7 @@ import ListadoPreventasPage from '../modules/preventa/pages/ListadoPreventasPage
 import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 import PosPage from '../modules/pos/pages/PosPage';
 import PurchaseSuggestionsPage from '../modules/purchasing/pages/PurchaseSuggestionsPage';
+import NewMerchandisePage from '../modules/inventory/newMerchandise/pages/NewMerchandisePage';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -58,6 +59,14 @@ export default function AppRouter() {
         <Route path="/ingresos" element={<NuevoIngreso />} />
         <Route path="/ingresos/nuevo" element={<NuevoIngreso />} />
         <Route path="/ingresos/historial" element={<HistorialIngresos />} />
+        <Route
+          path="/inventario/nueva-mercaderia"
+          element={
+            <RoleGuard roles={["repositor", "admin", "superadmin"]}>
+              <NewMerchandisePage />
+            </RoleGuard>
+          }
+        />
         <Route path="/preventas" element={<Navigate to="/preventas/guardadas" replace />} />
         <Route path="/preventas/simulador" element={<NuevaPreventaPage />} />
         <Route path="/preventas/guardadas" element={<ListadoPreventasPage />} />

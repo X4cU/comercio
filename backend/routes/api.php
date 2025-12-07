@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\DebugController;
 use App\Http\Controllers\Api\V1\HealthCheckController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Http\Controllers\Api\ProductoController;
+use App\Http\Controllers\Inventory\NewMerchandiseController;
 use App\Http\Controllers\Offers\OfferController;
 use App\Http\Controllers\Offers\OfferStatsController;
 use App\Http\Controllers\Offers\OfferSuggestionController;
@@ -83,5 +84,23 @@ Route::prefix('purchasing')->middleware(['kc.jwt'])->group(function (): void {
         Route::patch('/suggestions/{id}/items/{itemId}', [PurchaseSuggestionController::class, 'updateItem']);
         Route::post('/suggestions/{id}/confirm', [PurchaseSuggestionController::class, 'confirm']);
         Route::post('/suggestions/{id}/cancel', [PurchaseSuggestionController::class, 'cancel']);
+    });
+});
+
+Route::prefix('inventory')->middleware(['kc.jwt'])->group(function (): void {
+    Route::middleware('roles:admin,superadmin')->group(function (): void {
+        Route::get('/pricing-rules', [NewMerchandiseController::class, 'pricingRules']);
+    });
+
+    Route::middleware('roles:superadmin')->group(function (): void {
+        Route::post('/pricing-rules', [NewMerchandiseController::class, 'storePricingRule']);
+        Route::patch('/pricing-rules/{id}', [NewMerchandiseController::class, 'updatePricingRule']);
+    });
+
+    Route::middleware('roles:repositor,admin,superadmin')->group(function (): void {
+        Route::get('/new-merchandise/config', [NewMerchandiseController::class, 'config']);
+        Route::post('/new-merchandise', [NewMerchandiseController::class, 'store']);
+        Route::get('/batches', [NewMerchandiseController::class, 'batches']);
+        Route::get('/batches/{id}', [NewMerchandiseController::class, 'show']);
     });
 });

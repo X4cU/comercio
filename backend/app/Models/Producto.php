@@ -27,8 +27,10 @@ class Producto extends Model
         'descripcion',
         'imagen',
         'estado',
+        'section',
         'shelf_life_days',
         'perishable',
+        'current_sale_price',
     ];
 
     /**
@@ -40,6 +42,7 @@ class Producto extends Model
         'estado' => 'boolean',
         'perishable' => 'boolean',
         'shelf_life_days' => 'integer',
+        'current_sale_price' => 'float',
     ];
 
     /**
