@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { keycloakService } from '../../../auth/keycloakService';
+import { keycloakService } from '@/auth/keycloakService';
 
 export type PromotionType = 'PERCENTAGE' | 'FIXED_PRICE';
 

@@ -20,7 +20,7 @@ import SimuladorVentaPage from '../modules/preventa/pages/SimuladorVentaPage';
 import PosPage from '../modules/pos/pages/PosPage';
 import PurchaseSuggestionsPage from '../modules/purchasing/pages/PurchaseSuggestionsPage';
 import NewMerchandisePage from '../modules/inventory/newMerchandise/pages/NewMerchandisePage';
-import PromotionsPage from '../modules/promotions/pages/PromotionsPage';
+import PromotionsPage from '@/modules/promotions/pages/PromotionsPage';
 import FixedCostsPage from '../modules/finance/fixedCosts/FixedCostsPage';
 import DailyClosurePage from '../modules/finance/dailyClosures/DailyClosurePage';
 import { useContext } from 'react';
@@ -103,7 +103,7 @@ export default function AppRouter() {
         <Route path="/ofertas/nueva" element={<NuevaOferta />} />
         <Route path="/ofertas/historial" element={<HistorialOfertas />} />
         <Route
-          path="/promociones"
+          path="/comercial/promociones"
           element={
             <RoleGuard roles={["repositor", "admin", "superadmin"]}>
               <PromotionsPage />

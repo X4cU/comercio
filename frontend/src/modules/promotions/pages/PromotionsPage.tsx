@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { PlusIcon, ArrowPathIcon, FunnelIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import PromotionsTable from '../components/PromotionsTable';
-import PromotionFormDrawer from '../components/PromotionFormDrawer';
-import { Promotion, promotionsApi } from '../api/promotionsApi';
+import PromotionsTable from '@/modules/promotions/components/PromotionsTable';
+import PromotionFormDrawer from '@/modules/promotions/components/PromotionFormDrawer';
+import { Promotion, promotionsApi } from '@/modules/promotions/api/promotionsApi';
 
 export const PromotionsPage: React.FC = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);

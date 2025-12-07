@@ -1,7 +1,7 @@
 import React from 'react';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Switch } from '../../../components/ui/Switch';
-import { Promotion, PromotionEstado } from '../api/promotionsApi';
+import { Switch } from '@/components/ui/Switch';
+import { Promotion, PromotionEstado } from '@/modules/promotions/api/promotionsApi';
 
 type PromotionsTableProps = {
   promotions: Promotion[];

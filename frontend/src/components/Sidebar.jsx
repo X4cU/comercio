@@ -76,7 +76,6 @@ const sections = [
       { to: '/ofertas/sugeridas', label: 'Ofertas sugeridas', icon: MegaphoneIcon },
       { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon },
       { to: '/comercial/promociones', label: 'Promociones', icon: TagIcon },
-      { to: '/promociones', label: 'Promociones', icon: TagIcon }
     ]
   },
   {
