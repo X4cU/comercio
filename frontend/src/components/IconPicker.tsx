@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import {
   Apple,
   BadgePercent,
-  Basket,
   Beef,
   Beer,
   Cake,
@@ -10,6 +9,7 @@ import {
   CupSoda,
   Fish,
   Milk,
+  ShoppingBasket,
   ShoppingCart,
   Utensils,
 } from "lucide-react";
@@ -37,7 +37,7 @@ const iconOptions: IconOption[] = [
   { name: "ShoppingCart", label: "Carrito", Icon: ShoppingCart },
   { name: "Beer", label: "Beer", Icon: Beer },
   { name: "Milk", label: "Milk", Icon: Milk },
-  { name: "Basket", label: "Basket", Icon: Basket },
+  { name: "ShoppingBasket", label: "Basket", Icon: ShoppingBasket },
   { name: "Utensils", label: "Utensilios", Icon: Utensils },
   { name: "BadgePercent", label: "Descuento", Icon: BadgePercent },
 ];
