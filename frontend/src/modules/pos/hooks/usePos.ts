@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { posApi, CreateSalePayload, SaleItemPayload, PaymentPayload } from '../api/posApi';
+import { posApi, CreateSalePayload, SaleItemPayload } from '../api/posApi';
 
 export interface PosConfig {
   payment_methods: string[];
@@ -19,9 +19,8 @@ export interface PosState {
   config: PosConfig | null;
   cashSession: any;
   items: SaleItemPayload[];
-  payments: PaymentPayload[];
-  mode: 'INTERNAL' | 'ARCA_STUB';
-  globalDiscountPercent: number;
+  payment_method: CreateSalePayload['payment_method'];
+  apply_discount: boolean;
   loading: boolean;
   error: string | null;
   lastSale: any;
@@ -32,26 +31,25 @@ export function usePos() {
     config: null,
     cashSession: null,
     items: [],
-    payments: [],
-    mode: 'INTERNAL',
-    globalDiscountPercent: 0,
+    payment_method: 'efectivo',
+    apply_discount: true,
     loading: true,
     error: null,
     lastSale: null,
   });
 
   const totals = useMemo(() => {
-    const subtotal = state.items.reduce((acc, item) => acc + item.unit_price * item.quantity, 0);
-    const discountByItem = state.items.reduce((acc, item) => acc + (item.discount_amount || 0), 0);
-    const globalDiscount = ((subtotal - discountByItem) * state.globalDiscountPercent) / 100;
-    const discountTotal = discountByItem + globalDiscount;
+    const subtotal = state.items.reduce((acc, item) => acc + (item.unit_price || 0) * item.quantity, 0);
+    const allowedDiscounts = state.config?.payment_discounts || {};
+    const methodDiscount = state.apply_discount ? Number(allowedDiscounts[state.payment_method] || 0) : 0;
+    const discountTotal = (subtotal * methodDiscount) / 100;
     const total = subtotal - discountTotal;
     return {
       subtotal: Number(subtotal.toFixed(2)),
       discountTotal: Number(discountTotal.toFixed(2)),
       total: Number(total.toFixed(2)),
     };
-  }, [state.items, state.globalDiscountPercent]);
+  }, [state.items, state.apply_discount, state.payment_method, state.config]);
 
   const loadConfig = useCallback(async () => {
     try {
@@ -74,25 +72,21 @@ export function usePos() {
     setState((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }));
   };
 
-  const updatePayment = (payments: PaymentPayload[]) => {
-    setState((prev) => ({ ...prev, payments }));
-  };
+  const updatePaymentMethod = (payment_method: CreateSalePayload['payment_method']) =>
+    setState((prev) => ({ ...prev, payment_method }));
 
-  const updateMode = (mode: 'INTERNAL' | 'ARCA_STUB') => setState((prev) => ({ ...prev, mode }));
-
-  const updateDiscount = (percent: number) => setState((prev) => ({ ...prev, globalDiscountPercent: percent }));
+  const toggleDiscount = (apply_discount: boolean) => setState((prev) => ({ ...prev, apply_discount }));
 
   const resetSale = () =>
     setState((prev) => ({
       ...prev,
       items: [],
-      payments: [],
-      mode: 'INTERNAL',
-      globalDiscountPercent: 0,
+      payment_method: 'efectivo',
+      apply_discount: true,
       lastSale: null,
     }));
 
-  const openCashSession = async (payload: { cash_register_id: number; opening_amount: number; notes?: string }) => {
+  const openCashSession = async (payload: { cash_register_id?: number; opening_amount: number; notes?: string }) => {
     const session = await posApi.openCashSession(payload);
     setState((prev) => ({ ...prev, cashSession: session }));
     return session;
@@ -108,10 +102,9 @@ export function usePos() {
     if (!state.cashSession) throw new Error('Debes abrir una caja antes de vender.');
     const payload: CreateSalePayload = {
       cash_session_id: state.cashSession.id,
-      mode: state.mode,
       items: state.items,
-      payments: state.payments,
-      global_discount_percent: state.globalDiscountPercent,
+      payment_method: state.payment_method,
+      apply_discount: state.apply_discount,
     };
     const sale = await posApi.createSale(payload);
     setState((prev) => ({ ...prev, lastSale: sale }));
@@ -123,9 +116,8 @@ export function usePos() {
     totals,
     addItem,
     removeItem,
-    updatePayment,
-    updateMode,
-    updateDiscount,
+    updatePaymentMethod,
+    toggleDiscount,
     resetSale,
     openCashSession,
     closeCashSession,

@@ -22,7 +22,12 @@ class SaleItem extends Model
         'unit_price',
         'quantity',
         'discount_amount',
+        'insufficient_stock',
         'total',
+    ];
+
+    protected $casts = [
+        'insufficient_stock' => 'boolean',
     ];
 
     protected $casts = [

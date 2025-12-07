@@ -27,19 +27,24 @@ class Sale extends Model
         'user_id',
         'sale_number',
         'mode',
+        'payment_method',
         'subtotal',
         'discount_total',
+        'applied_discount_percentage',
         'tax_total',
         'total',
         'status',
+        'low_stock_flag',
         'printed_at',
     ];
 
     protected $casts = [
         'subtotal' => 'decimal:2',
         'discount_total' => 'decimal:2',
+        'applied_discount_percentage' => 'decimal:2',
         'tax_total' => 'decimal:2',
         'total' => 'decimal:2',
+        'low_stock_flag' => 'boolean',
         'printed_at' => 'datetime',
     ];
 

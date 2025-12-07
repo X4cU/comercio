@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Pos;
 
 use App\Models\PosSetting;
+use App\Models\PaymentMethodDiscount;
 
 class PosConfigService
 {
@@ -26,6 +27,7 @@ class PosConfigService
     {
         return [
             'payment_methods' => $this->getPaymentMethods(),
+            'payment_discounts' => $this->getPaymentDiscounts(),
             'discount_limits' => $this->getDiscountLimits(),
             'ticket' => $this->getTicketConfig(),
             'arca' => [
@@ -40,6 +42,16 @@ class PosConfigService
         $setting = PosSetting::where('key', 'payment_methods')->first();
 
         return $setting?->value ?? self::DEFAULT_PAYMENT_METHODS;
+    }
+
+    private function getPaymentDiscounts(): array
+    {
+        return PaymentMethodDiscount::query()
+            ->get(['payment_method', 'max_discount_percentage'])
+            ->mapWithKeys(fn (PaymentMethodDiscount $discount) => [
+                $discount->payment_method => (float) $discount->max_discount_percentage,
+            ])
+            ->toArray();
     }
 
     private function getDiscountLimits(): array
