@@ -15,6 +15,7 @@ use App\Http\Controllers\Offers\OfferSuggestionController;
 use App\Http\Controllers\Pos\CashSessionController;
 use App\Http\Controllers\Pos\PosConfigController;
 use App\Http\Controllers\Pos\SaleController;
+use App\Http\Controllers\Promotions\PromotionController;
 use App\Http\Controllers\Purchasing\PurchaseSuggestionController;
 use Illuminate\Support\Facades\Route;
 
@@ -125,4 +126,21 @@ Route::prefix('inventory')->middleware(['kc.jwt'])->group(function (): void {
         Route::get('/batches', [NewMerchandiseController::class, 'batches']);
         Route::get('/batches/{id}', [NewMerchandiseController::class, 'show']);
     });
+});
+
+Route::prefix('promotions')->middleware(['kc.jwt'])->group(function (): void {
+    Route::middleware('roles:admin,superadmin')->group(function (): void {
+        Route::get('/', [PromotionController::class, 'index']);
+        Route::post('/', [PromotionController::class, 'store']);
+        Route::get('/{id}', [PromotionController::class, 'show']);
+        Route::put('/{id}', [PromotionController::class, 'update']);
+        Route::post('/{id}/toggle', [PromotionController::class, 'toggle']);
+    });
+
+    Route::middleware('roles:superadmin')->group(function (): void {
+        Route::delete('/{id}', [PromotionController::class, 'destroy']);
+    });
+
+    Route::post('/check', [PromotionController::class, 'check'])
+        ->middleware('roles:cajero,repositor,admin,superadmin');
 });

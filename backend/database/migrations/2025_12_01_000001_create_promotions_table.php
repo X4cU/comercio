@@ -16,9 +16,10 @@ return new class extends Migration {
             $table->string('scope_type');
             $table->unsignedBigInteger('scope_id')->nullable();
             $table->string('discount_type')->default('PERCENTAGE');
-            $table->decimal('discount_value', 5, 2);
+            $table->decimal('discount_value', 12, 2)->nullable();
+            $table->decimal('promotional_price', 12, 2)->nullable();
             $table->decimal('min_quantity', 12, 3)->nullable();
-            $table->dateTime('valid_from');
+            $table->dateTime('valid_from')->nullable();
             $table->dateTime('valid_until')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('priority')->default(1);

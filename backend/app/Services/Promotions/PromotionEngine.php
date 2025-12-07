@@ -21,7 +21,9 @@ class PromotionEngine
 
         $candidates = Promotion::query()
             ->where('is_active', true)
-            ->where('valid_from', '<=', $timestamp)
+            ->where(function ($query) use ($timestamp) {
+                $query->whereNull('valid_from')->orWhere('valid_from', '<=', $timestamp);
+            })
             ->where(function ($query) use ($timestamp) {
                 $query->whereNull('valid_until')->orWhere('valid_until', '>=', $timestamp);
             })
