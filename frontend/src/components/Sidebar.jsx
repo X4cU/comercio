@@ -73,7 +73,8 @@ const sections = [
     title: 'Comercial',
     items: [
       { to: '/ofertas/sugeridas', label: 'Ofertas sugeridas', icon: MegaphoneIcon },
-      { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon }
+      { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon },
+      { to: '/promociones', label: 'Promociones', icon: TagIcon }
     ]
   },
   {
