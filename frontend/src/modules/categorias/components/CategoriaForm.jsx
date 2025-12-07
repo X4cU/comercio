@@ -1,4 +1,4 @@
-import IconPicker from '@/components/IconPicker';
+import IconPicker from '../../../components/IconPicker';
 import { useEffect, useMemo, useState } from 'react';
 
 const inputClasses =
