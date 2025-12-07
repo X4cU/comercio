@@ -20,7 +20,18 @@ class CashSessionController extends Controller
     public function open(OpenCashSessionRequest $request): JsonResponse
     {
         $userId = (string) $request->user()?->getAuthIdentifier();
-        $cashRegister = CashRegister::find($request->integer('cash_register_id'));
+        $cashRegisterId = $request->integer('cash_register_id');
+        $cashRegister = $cashRegisterId
+            ? CashRegister::find($cashRegisterId)
+            : CashRegister::where('is_active', true)->orderBy('id')->first();
+
+        if (!$cashRegister) {
+            $cashRegister = CashRegister::create([
+                'name' => 'Caja principal',
+                'location' => 'POS',
+                'is_active' => true,
+            ]);
+        }
 
         if (!$cashRegister?->is_active) {
             throw new BadRequestHttpException('La caja seleccionada no está activa.');

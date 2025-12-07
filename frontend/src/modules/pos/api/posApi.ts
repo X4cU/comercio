@@ -13,25 +13,17 @@ posClient.interceptors.request.use((config) => {
   return config;
 });
 
-export interface PaymentPayload {
-  payment_method: 'CASH' | 'DEBIT_CARD' | 'CREDIT_CARD' | 'TRANSFER' | 'OTHER';
-  amount: number;
-  details?: Record<string, unknown>;
-}
-
 export interface SaleItemPayload {
   product_id: number;
   quantity: number;
-  unit_price: number;
-  discount_amount?: number;
+  unit_price?: number;
 }
 
 export interface CreateSalePayload {
   cash_session_id: number;
-  mode: 'INTERNAL' | 'ARCA_STUB';
   items: SaleItemPayload[];
-  payments: PaymentPayload[];
-  global_discount_percent?: number;
+  payment_method: 'efectivo' | 'transferencia' | 'debito' | 'credito' | 'mp';
+  apply_discount?: boolean;
 }
 
 export const posApi = {
@@ -43,7 +35,7 @@ export const posApi = {
     const { data } = await posClient.get('/cash-sessions/current');
     return data;
   },
-  openCashSession: async (payload: { cash_register_id: number; opening_amount: number; notes?: string }) => {
+  openCashSession: async (payload: { cash_register_id?: number; opening_amount: number; notes?: string }) => {
     const { data } = await posClient.post('/cash-sessions/open', payload);
     return data;
   },

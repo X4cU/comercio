@@ -18,17 +18,12 @@ class CreateSaleRequest extends FormRequest
     {
         return [
             'cash_session_id' => ['required', 'integer', 'exists:cash_sessions,id'],
-            'mode' => ['required', Rule::in(['INTERNAL', 'ARCA_STUB'])],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer', 'exists:productos,id'],
             'items.*.quantity' => ['required', 'numeric', 'gt:0'],
-            'items.*.unit_price' => ['required', 'numeric', 'gt:0'],
-            'items.*.discount_amount' => ['nullable', 'numeric', 'min:0'],
-            'payments' => ['required', 'array', 'min:1'],
-            'payments.*.payment_method' => ['required', Rule::in(['CASH', 'DEBIT_CARD', 'CREDIT_CARD', 'TRANSFER', 'OTHER'])],
-            'payments.*.amount' => ['required', 'numeric', 'gt:0'],
-            'payments.*.details' => ['nullable', 'array'],
-            'global_discount_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'items.*.unit_price' => ['nullable', 'numeric', 'gt:0'],
+            'payment_method' => ['required', Rule::in(['efectivo', 'transferencia', 'debito', 'credito', 'mp'])],
+            'apply_discount' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Database\Seeders\PaymentMethodDiscountSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seeders will be defined in future phases.
+        $this->call([
+            PaymentMethodDiscountSeeder::class,
+        ]);
     }
 }

@@ -7,10 +7,12 @@ namespace App\Services\Pos;
 use App\Models\AuditLog;
 use App\Models\CashSession;
 use App\Models\Payment;
+use App\Models\PaymentMethodDiscount;
 use App\Models\Producto;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -39,41 +41,44 @@ class SaleService
             throw new BadRequestHttpException('No tienes permiso para operar sobre esta caja.');
         }
 
-        $discountPercent = (float) ($data['global_discount_percent'] ?? 0);
-        $this->validateDiscountLimit($discountPercent, $roles);
-
         $items = collect($data['items']);
-        $this->stockService->reserveStockForSale($items);
+        $stockSnapshots = $this->stockService->reserveStockForSale($items);
+        $computed = $this->calculateTotals($items, $data['payment_method'], (bool) ($data['apply_discount'] ?? false), $stockSnapshots);
 
-        $computed = $this->calculateTotals($items, $discountPercent);
-        $payments = collect($data['payments']);
-        $this->assertPaymentCoverage($payments, $computed['total']);
+        $paymentAmount = $computed['total'];
+        if ($paymentAmount <= 0) {
+            throw new BadRequestHttpException('El total de la venta debe ser mayor a cero.');
+        }
 
         return $this->databaseManager->transaction(function () use (
             $cashSession,
             $data,
             $userId,
             $computed,
-            $payments,
+            $stockSnapshots,
         ): Sale {
             $sale = Sale::create([
                 'cash_session_id' => $cashSession->id,
                 'user_id' => $userId,
                 'sale_number' => $this->generateSaleNumber(),
-                'mode' => $data['mode'],
+                'mode' => 'INTERNAL',
+                'payment_method' => $data['payment_method'],
                 'subtotal' => $computed['subtotal'],
                 'discount_total' => $computed['discount_total'],
-                'tax_total' => $computed['tax_total'],
+                'applied_discount_percentage' => $computed['applied_discount_percentage'],
+                'tax_total' => 0,
                 'total' => $computed['total'],
                 'status' => Sale::STATUS_COMPLETED,
+                'printed_at' => Carbon::now(),
+                'low_stock_flag' => false,
             ]);
 
             $this->createItems($sale, $computed['items']);
-            $this->createPayments($sale, $payments);
+            $this->createPayment($sale, $computed['total'], $data['payment_method']);
 
-            if ($sale->mode === Sale::MODE_ARCA_STUB) {
-                $this->arcaServiceStub->markAsReadyForArca($sale->load(['items', 'payments']));
-            }
+            $this->stockService->applySaleStockMovements($sale, $items, $stockSnapshots);
+
+            $this->logAudit($userId, sprintf('Venta %s confirmada en POS', $sale->sale_number));
 
             return $sale->load(['items', 'payments', 'cashSession.cashRegister']);
         });
@@ -100,80 +105,54 @@ class SaleService
         });
     }
 
-    private function validateDiscountLimit(float $discountPercent, array $roles): void
+    private function calculateTotals(Collection $items, string $paymentMethod, bool $applyDiscount, array $stockSnapshots): array
     {
-        $limits = $this->posConfigService->getConfig()['discount_limits'];
-        $allowed = 0.0;
+        $paymentDiscount = PaymentMethodDiscount::where('payment_method', $paymentMethod)->first();
+        $discountPercent = $applyDiscount ? (float) ($paymentDiscount?->max_discount_percentage ?? 0) : 0;
 
-        foreach ($roles as $role) {
-            if (isset($limits[$role])) {
-                $allowed = max($allowed, (float) $limits[$role] * 100);
-            }
-        }
-
-        if ($discountPercent > $allowed) {
-            throw new BadRequestHttpException('El descuento supera el máximo permitido para tu rol.');
-        }
-    }
-
-    private function calculateTotals(Collection $items, float $discountPercent): array
-    {
-        $mappedItems = $items->map(function (array $item): array {
+        $mappedItems = $items->values()->map(function (array $item, int $index) use ($stockSnapshots): array {
             $product = Producto::find($item['product_id']);
             if (!$product) {
                 throw new NotFoundHttpException('Producto no encontrado');
             }
 
-            $lineSubtotal = (float) $item['unit_price'] * (float) $item['quantity'];
-            $lineDiscount = (float) ($item['discount_amount'] ?? 0);
-            $lineTotal = $lineSubtotal - $lineDiscount;
+            $unitPrice = isset($item['unit_price']) ? (float) $item['unit_price'] : (float) ($product->current_sale_price ?? $product->precio_actual ?? 0);
+            $lineSubtotal = $unitPrice * (float) $item['quantity'];
 
             return [
                 'product_id' => $item['product_id'],
                 'product_name_snapshot' => $product->nombre,
-                'unit_price' => $item['unit_price'],
-                'quantity' => $item['quantity'],
-                'discount_amount' => $lineDiscount,
+                'unit_price' => $unitPrice,
+                'quantity' => (float) $item['quantity'],
+                'discount_amount' => 0,
                 'line_subtotal' => $lineSubtotal,
-                'total' => $lineTotal,
+                'total' => $lineSubtotal,
+                'insufficient_stock' => (bool) ($stockSnapshots[$index]['insufficient'] ?? false),
             ];
         });
 
         $subtotal = $mappedItems->sum('line_subtotal');
-        $discountByItem = $mappedItems->sum('discount_amount');
-        $globalDiscount = (($subtotal - $discountByItem) * $discountPercent) / 100;
-        $taxTotal = 0.0; // Placeholder para impuestos futuros.
-        $discountTotal = $discountByItem + $globalDiscount;
-        $total = $subtotal - $discountTotal + $taxTotal;
+        $discountTotal = $discountPercent > 0 ? ($subtotal * $discountPercent) / 100 : 0;
+        $total = $subtotal - $discountTotal;
 
         return [
-            'items' => $mappedItems->map(function (array $item) use ($discountPercent, $globalDiscount, $subtotal, $discountByItem) {
-                $proportionalGlobalDiscount = $subtotal > 0
-                    ? (($item['line_subtotal'] - $item['discount_amount']) / max($subtotal - $discountByItem, 0.01)) * $globalDiscount
-                    : 0;
-
+            'items' => $mappedItems->map(function (array $item) use ($subtotal, $discountTotal): array {
+                $proportional = $subtotal > 0 ? ($item['line_subtotal'] / $subtotal) * $discountTotal : 0;
                 return [
                     'product_id' => $item['product_id'],
                     'product_name_snapshot' => $item['product_name_snapshot'],
                     'unit_price' => $item['unit_price'],
                     'quantity' => $item['quantity'],
-                    'discount_amount' => round($item['discount_amount'] + $proportionalGlobalDiscount, 2),
-                    'total' => round($item['total'] - $proportionalGlobalDiscount, 2),
+                    'discount_amount' => round($proportional, 2),
+                    'total' => round($item['line_subtotal'] - $proportional, 2),
+                    'insufficient_stock' => $item['insufficient_stock'] ?? false,
                 ];
             }),
             'subtotal' => round($subtotal, 2),
             'discount_total' => round($discountTotal, 2),
-            'tax_total' => round($taxTotal, 2),
+            'applied_discount_percentage' => round($discountPercent, 2),
             'total' => round($total, 2),
         ];
-    }
-
-    private function assertPaymentCoverage(Collection $payments, float $total): void
-    {
-        $paymentsTotal = round($payments->sum('amount'), 2);
-        if (abs($paymentsTotal - round($total, 2)) > 0.01) {
-            throw new BadRequestHttpException('Los pagos no coinciden con el total de la venta.');
-        }
     }
 
     private function createItems(Sale $sale, Collection $items): void
@@ -181,9 +160,13 @@ class SaleService
         $items->each(fn (array $item) => SaleItem::create($item + ['sale_id' => $sale->id]));
     }
 
-    private function createPayments(Sale $sale, Collection $payments): void
+    private function createPayment(Sale $sale, float $total, string $paymentMethod): void
     {
-        $payments->each(fn (array $payment) => Payment::create($payment + ['sale_id' => $sale->id]));
+        Payment::create([
+            'sale_id' => $sale->id,
+            'payment_method' => $paymentMethod,
+            'amount' => $total,
+        ]);
     }
 
     private function generateSaleNumber(): string
