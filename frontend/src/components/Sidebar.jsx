@@ -12,7 +12,8 @@ import {
   MegaphoneIcon,
   ArrowDownOnSquareStackIcon,
   ShoppingCartIcon,
-  ClipboardDocumentCheckIcon
+  ClipboardDocumentCheckIcon,
+  BanknotesIcon
 } from '@heroicons/react/24/outline';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 
@@ -75,6 +76,13 @@ const sections = [
       { to: '/ofertas/sugeridas', label: 'Ofertas sugeridas', icon: MegaphoneIcon },
       { to: '/ofertas/historial', label: 'Historial de ofertas', icon: ClipboardDocumentListIcon },
       { to: '/promociones', label: 'Promociones', icon: TagIcon }
+    ]
+  },
+  {
+    title: 'Finanzas',
+    items: [
+      { to: '/finanzas/costos-fijos', label: 'Costos fijos', icon: BanknotesIcon },
+      { to: '/caja/cierre-diario', label: 'Cierre diario de caja', icon: ClipboardDocumentCheckIcon }
     ]
   },
   {
