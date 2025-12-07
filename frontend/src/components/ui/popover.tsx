@@ -1,6 +1,6 @@
 import {
   Popover as HeadlessPopover,
-  PopoverButton,
+  PopoverButton as HeadlessPopoverButton,
   PopoverPanel,
   Transition,
 } from "@headlessui/react";
@@ -26,9 +26,9 @@ export const Popover: React.FC<React.PropsWithChildren> = ({ children }) => (
 
 export const PopoverTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ComponentPropsWithoutRef<typeof PopoverButton>
+  React.ComponentPropsWithoutRef<typeof HeadlessPopoverButton>
 >(({ className, children, ...props }, ref) => (
-  <PopoverButton
+  <HeadlessPopoverButton
     ref={ref}
     type="button"
     className={cn(
@@ -40,7 +40,7 @@ export const PopoverTrigger = React.forwardRef<
     {...props}
   >
     {children}
-  </PopoverButton>
+  </HeadlessPopoverButton>
 ));
 PopoverTrigger.displayName = "PopoverTrigger";
 
