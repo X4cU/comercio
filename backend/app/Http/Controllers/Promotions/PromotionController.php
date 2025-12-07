@@ -28,22 +28,29 @@ class PromotionController extends Controller
     {
         $query = Promotion::query()->with(['product']);
 
-        if ($request->filled('is_active')) {
-            $query->where('is_active', $request->boolean('is_active'));
-        }
+        if ($request->filled('estado') && $request->string('estado') !== 'todas') {
+            $estado = $request->string('estado');
+            $now = Carbon::now();
 
-        if ($request->filled('scope_type')) {
-            $query->where('scope_type', $request->string('scope_type'));
-        }
+            if ($estado === 'activa') {
+                $query->where('is_active', true)
+                    ->where(function ($q) use ($now) {
+                        $q->whereNull('valid_from')->orWhere('valid_from', '<=', $now);
+                    })
+                    ->where(function ($q) use ($now) {
+                        $q->whereNull('valid_until')->orWhere('valid_until', '>=', $now);
+                    });
+            }
 
-        if ($request->filled('from')) {
-            $query->where('valid_from', '>=', Carbon::parse($request->string('from')));
-        }
+            if ($estado === 'programada') {
+                $query->where('is_active', true)
+                    ->whereNotNull('valid_from')
+                    ->where('valid_from', '>', $now);
+            }
 
-        if ($request->filled('to')) {
-            $query->where(function ($q) use ($request) {
-                $q->whereNull('valid_until')->orWhere('valid_until', '<=', Carbon::parse($request->string('to')));
-            });
+            if ($estado === 'vencida') {
+                $query->whereNotNull('valid_until')->where('valid_until', '<', $now);
+            }
         }
 
         if ($request->filled('search')) {
@@ -51,7 +58,13 @@ class PromotionController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
-        $promotions = $query->orderByDesc('created_at')->paginate(15);
+        $promotions = $query
+            ->orderByRaw("CASE WHEN is_active = 1 THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN valid_until IS NULL THEN 0 ELSE 1 END")
+            ->orderByDesc('valid_until')
+            ->orderBy('valid_from')
+            ->orderByDesc('created_at')
+            ->paginate(15);
 
         return response()->json($promotions);
     }

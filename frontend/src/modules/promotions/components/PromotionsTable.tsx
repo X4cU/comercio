@@ -1,12 +1,14 @@
 import React from 'react';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Promotion } from '../api/promotionsApi';
+import { Switch } from '../../../components/ui/Switch';
+import { Promotion, PromotionEstado } from '../api/promotionsApi';
 
 type PromotionsTableProps = {
   promotions: Promotion[];
   loading?: boolean;
   onEdit?: (promotion: Promotion) => void;
   onDelete?: (promotion: Promotion) => void;
+  onToggle?: (promotion: Promotion) => void;
 };
 
 const formatTypeLabel = (tipo: Promotion['tipo']) => {
@@ -25,12 +27,21 @@ const formatValue = (promotion: Promotion) => {
   return '—';
 };
 
+const estadoBadge = (estado?: PromotionEstado) => {
+  const base = 'inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold';
+  if (estado === 'activa') return `${base} bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200`;
+  if (estado === 'programada')
+    return `${base} bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200`;
+  if (estado === 'vencida') return `${base} bg-red-50 text-red-700 dark:bg-red-900/40 dark:text-red-200`;
+  return `${base} bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300`;
+};
+
 const formatDate = (value?: string | null) => {
   if (!value) return 'Sin fecha';
   return new Date(value).toLocaleString();
 };
 
-export const PromotionsTable: React.FC<PromotionsTableProps> = ({ promotions, loading = false, onEdit, onDelete }) => {
+export const PromotionsTable: React.FC<PromotionsTableProps> = ({ promotions, loading = false, onEdit, onDelete, onToggle }) => {
   if (loading) {
     return <p className="text-sm text-gray-500 dark:text-gray-400">Cargando promociones...</p>;
   }
@@ -68,18 +79,18 @@ export const PromotionsTable: React.FC<PromotionsTableProps> = ({ promotions, lo
                 <div className="text-xs text-gray-500">{promotion.fecha_fin ? formatDate(promotion.fecha_fin) : 'Sin fecha fin'}</div>
               </td>
               <td className="px-4 py-3">
-                <span
-                  className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-semibold ${
-                    promotion.activo
-                      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200'
-                      : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
-                  }`}
-                >
-                  {promotion.activo ? 'Activo' : 'Inactivo'}
-                </span>
+                <span className={estadoBadge(promotion.estado)}>{promotion.estado ?? '—'}</span>
               </td>
               <td className="px-4 py-3 text-right text-sm">
                 <div className="flex items-center justify-end gap-2">
+                  <div className="flex items-center gap-2 rounded-lg border border-gray-200 px-2 py-1 dark:border-gray-700">
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Activo</span>
+                    <Switch
+                      checked={promotion.activo}
+                      onChange={() => onToggle?.(promotion)}
+                      aria-label="Activar o desactivar promoción"
+                    />
+                  </div>
                   <button
                     onClick={() => onEdit?.(promotion)}
                     className="rounded-lg border border-gray-200 p-2 text-gray-600 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"
